@@ -13,17 +13,17 @@ def main():
         walls[i][1] = wall
         d = math.sqrt((ax - x)**2 + (ay - y)**2)
         dprime = d * math.cos(math.radians(- (w // 2) + i))
-        height = math.floor(1500 / dprime)
+        height = round(1500 / dprime)
         print(i, d, dprime, height)
         walls[i][0] = height
     
-    for i in range((h // 2) + 1):
+    for i in range(h + 1):
         string = []
         for j in range(w):
-            string.append(' ') if (i < (h - walls[j][0] * 2) / 2) else string.append(walls[j][1])
+            string.append(' ') if (i < (h - walls[j][0])) else string.append(walls[j][1])
         results.append(''.join(string))
-    for i in range(h // 2):
-        results.append(results[(h // 2) - 1 - i])
+    for i in range(h):
+        results.append(results[h - 1 - i])
 
     for result in results:
         print(result)
