@@ -7,7 +7,7 @@ import time
 # x, y  : coordinates of the camera
 # a     : camera angle
 # n     : map size in number of tiles
-x, y, a, n = 1200, 910, 120, 20
+x, y, an, n = 1200, 910, 120, 20
 
 # the map
 # # marks wall
@@ -61,45 +61,47 @@ def main():
     
     # reset the output file
     with open("output.txt", 'w') as f:
-        f.write(f"{x} {y} {a} {n}\n")
+        f.write(f"{x} {y} {an} {n}\n")
     
     # results is the array of ASCII string
-    results = []
-    # walls contain the height and the type of wall, based on the column
-    walls = [[0, ''] for i in range(w)]
+    for a in range(an - 30, an + 30, 2):
+        results = []
+        # walls contain the height and the type of wall, based on the column
+        walls = [[0, ''] for i in range(w)]
 
-    # calculation of the wall height and wall type
-    for i in range(w):
-        wall, ax, ay = raycasting(x // 100, y // 100, x, y, a - (w // 2) + i)
+        # calculation of the wall height and wall type
+        for i in range(w):
+            wall, ax, ay = raycasting(x // 100, y // 100, x, y, a - (w // 2) + i)
 
-        walls[i][1] = wall
+            walls[i][1] = wall
 
-        d = math.sqrt((ax - x)**2 + (ay - y)**2)
-        dprime = d * math.cos(math.radians(- (w // 2) + i))
-        height = round(h * 100 / dprime)
-        walls[i][0] = height
+            d = math.sqrt((ax - x)**2 + (ay - y)**2)
+            dprime = d * math.cos(math.radians(- (w // 2) + i))
+            height = round(h * 100 / dprime)
+            walls[i][0] = height
 
-        with open("output.txt", 'a') as f:
-            f.write(f"{walls[i]} {ax} {ay}\n")
-    
-    # construction of the upper half of the image.
-    # we only have to construct the upper half since the image is symetric
-    # the loop ends at h // 2 + 1 to construct the middle row
-    for i in range(h // 2 + 1):
-        string = []
-        for j in range(w):
-            # check height
-            # + h//2 to only take the central part of the rows of the image
-            string.append(' ') if (i + h // 2 + 1 < (h - walls[j][0])) else string.append(walls[j][1])
-        results.append(''.join(string))
-    
-    # copy and flip the upper half of the image
-    for i in range(h // 2):
-        results.append(results[h // 2 - 1 - i])
-    
-    # print the result
-    for i, result in enumerate(results):
-        print(result)
+            with open("output.txt", 'a') as f:
+                f.write(f"{walls[i]} {ax} {ay}\n")
+        
+        # construction of the upper half of the image.
+        # we only have to construct the upper half since the image is symetric
+        # the loop ends at h // 2 + 1 to construct the middle row
+        for i in range(h // 2 + 1):
+            string = []
+            for j in range(w):
+                # check height
+                # + h//2 to only take the central part of the rows of the image
+                string.append(' ') if (i + h // 2 + 1 < (h - walls[j][0])) else string.append(walls[j][1])
+            results.append(''.join(string))
+        
+        # copy and flip the upper half of the image
+        for i in range(h // 2):
+            results.append(results[h // 2 - 1 - i])
+        
+        # print the result
+        for i, result in enumerate(results):
+            print(result)
+        print('\n')
 
 # This function is used to find the intersection of a ray casted from an
 # origin to a wall. This function will search recursively through the gridmap 
